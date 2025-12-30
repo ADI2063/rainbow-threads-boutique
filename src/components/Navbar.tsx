@@ -21,7 +21,7 @@ const Navbar = () => {
           <a href="/" className="flex items-center gap-2 group">
             <Sparkles className="w-6 h-6 text-pride-purple group-hover:text-pride-pink transition-colors" />
             <span className="text-xl font-bold gradient-rainbow-text">
-              PRISMATIC
+              halovera
             </span>
           </a>
 

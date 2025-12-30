@@ -33,7 +33,7 @@ const Footer = () => {
             <a href="/" className="flex items-center gap-2 mb-4">
               <Sparkles className="w-6 h-6 text-pride-purple" />
               <span className="text-xl font-bold gradient-rainbow-text">
-                PRISMATIC
+                halovera
               </span>
             </a>
             <p className="text-muted-foreground mb-6 max-w-sm">
@@ -109,7 +109,7 @@ const Footer = () => {
         <div className="mt-16 pt-8 border-t border-border">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-sm text-muted-foreground flex items-center gap-1">
-              © {currentYear} PRISMATIC. Made with{" "}
+              © {currentYear} halovera. Made with{" "}
               <Heart className="w-4 h-4 text-pride-pink fill-current" /> for the
               community.
             </p>
