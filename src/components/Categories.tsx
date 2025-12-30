@@ -1,54 +1,30 @@
 import { useState } from "react";
-import { Sparkles, Shirt, Heart, Flag, Star, Palette } from "lucide-react";
+import { Heart, Sparkles, Flag } from "lucide-react";
 
 const categories = [
   {
     id: 1,
-    name: "Pride Essentials",
-    description: "Rainbow basics for everyday",
+    name: "Gay Pride",
+    description: "Bold rainbow styles for him",
     icon: Flag,
     color: "from-pride-red via-pride-orange to-pride-yellow",
-    items: 45,
+    items: 52,
   },
   {
     id: 2,
-    name: "Trans Pride",
-    description: "Celebrate trans identity",
+    name: "Lesbian Pride",
+    description: "Celebrate sapphic love",
     icon: Heart,
-    color: "from-pride-blue via-pride-pink to-pride-blue",
-    items: 32,
+    color: "from-pride-orange via-pride-pink to-pride-purple",
+    items: 48,
   },
   {
     id: 3,
-    name: "Statement Tees",
-    description: "Say it loud and proud",
-    icon: Shirt,
-    color: "from-pride-purple via-pride-pink to-pride-red",
-    items: 58,
-  },
-  {
-    id: 4,
-    name: "Accessories",
-    description: "Complete your look",
+    name: "Bisexual Pride",
+    description: "Love without limits",
     icon: Sparkles,
-    color: "from-pride-green via-pride-blue to-pride-purple",
-    items: 73,
-  },
-  {
-    id: 5,
-    name: "Non-Binary",
-    description: "Beyond the binary",
-    icon: Star,
-    color: "from-pride-yellow via-pride-purple to-pride-purple",
-    items: 28,
-  },
-  {
-    id: 6,
-    name: "Custom Designs",
-    description: "Create your own",
-    icon: Palette,
     color: "from-pride-pink via-pride-purple to-pride-blue",
-    items: 0,
+    items: 45,
   },
 ];
 
