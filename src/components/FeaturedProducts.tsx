@@ -5,63 +5,68 @@ import { Button } from "@/components/ui/button";
 const products = [
   {
     id: 1,
-    name: "Rainbow Pride Hoodie",
-    price: 65,
-    originalPrice: 85,
+    name: "Rainbow Pride Tote Bag",
+    category: "Tote Bags",
+    price: 28,
     rating: 4.9,
-    reviews: 128,
-    image: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&h=500&fit=crop",
+    reviews: 156,
+    image: "https://images.unsplash.com/photo-1544816155-12df9643f363?w=400&h=500&fit=crop",
     badge: "Bestseller",
     badgeColor: "from-pride-orange to-pride-red",
   },
   {
     id: 2,
-    name: "Love Wins Crop Top",
-    price: 35,
+    name: "Pride Flag Sticker Pack",
+    category: "Stickers",
+    price: 12,
     rating: 4.8,
-    reviews: 89,
-    image: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=400&h=500&fit=crop",
-    badge: "New",
+    reviews: 324,
+    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=500&fit=crop",
+    badge: "Popular",
     badgeColor: "from-pride-purple to-pride-pink",
   },
   {
     id: 3,
-    name: "Trans Pride Denim Jacket",
-    price: 95,
+    name: "Bi Pride Enamel Pin Set",
+    category: "Accessories",
+    price: 18,
     rating: 5.0,
-    reviews: 56,
-    image: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400&h=500&fit=crop",
-    badge: "Limited",
-    badgeColor: "from-pride-blue to-pride-pink",
+    reviews: 89,
+    image: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=400&h=500&fit=crop",
+    badge: "New",
+    badgeColor: "from-pride-pink via-pride-purple to-pride-blue",
   },
   {
     id: 4,
-    name: "Non-Binary Vibes Tee",
+    name: "Canvas Pride Tote",
+    category: "Tote Bags",
     price: 32,
     rating: 4.7,
-    reviews: 234,
-    image: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=400&h=500&fit=crop",
+    reviews: 112,
+    image: "https://images.unsplash.com/photo-1597633125097-5a9ae21a7df2?w=400&h=500&fit=crop",
   },
   {
     id: 5,
-    name: "Pride Flag Sneakers",
-    price: 120,
-    originalPrice: 150,
+    name: "Holographic Pride Stickers",
+    category: "Stickers",
+    price: 8,
+    originalPrice: 12,
     rating: 4.9,
-    reviews: 67,
-    image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=500&fit=crop",
+    reviews: 201,
+    image: "https://images.unsplash.com/photo-1572375992501-4b0892d50c69?w=400&h=500&fit=crop",
     badge: "Sale",
     badgeColor: "from-pride-green to-pride-blue",
   },
   {
     id: 6,
-    name: "Bi Pride Bomber",
-    price: 88,
+    name: "Pride Bracelet Bundle",
+    category: "Accessories",
+    price: 24,
     rating: 4.8,
-    reviews: 45,
-    image: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400&h=500&fit=crop",
-    badge: "Popular",
-    badgeColor: "from-pride-pink via-pride-purple to-pride-blue",
+    reviews: 178,
+    image: "https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=400&h=500&fit=crop",
+    badge: "Bundle",
+    badgeColor: "from-pride-yellow to-pride-orange",
   },
 ];
 
@@ -82,10 +87,10 @@ const FeaturedProducts = () => {
         <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-12">
           <div>
             <h2 className="text-3xl md:text-5xl font-bold mb-4">
-              Featured <span className="gradient-rainbow-text">Favorites</span>
+              Totes, Stickers & <span className="gradient-rainbow-text">More</span>
             </h2>
             <p className="text-muted-foreground max-w-xl">
-              Our most-loved pieces, handpicked by the community.
+              Express yourself with our most-loved accessories and essentials.
             </p>
           </div>
           <Button variant="pride-outline" className="mt-6 md:mt-0">
@@ -152,6 +157,11 @@ const FeaturedProducts = () => {
                       {product.badge}
                     </div>
                   )}
+
+                  {/* Category Tag */}
+                  <div className="absolute bottom-4 left-4 px-2 py-1 rounded-md bg-background/80 backdrop-blur-sm text-xs font-medium text-foreground">
+                    {product.category}
+                  </div>
 
                   {/* Favorite Button (Mobile) */}
                   <button
