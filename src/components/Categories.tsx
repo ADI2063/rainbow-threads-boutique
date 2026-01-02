@@ -1,30 +1,21 @@
 import { useState } from "react";
-import { Heart, Sparkles, Flag } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
-const categories = [
+const flags = [
   {
     id: 1,
     name: "Gay Pride",
-    description: "Bold rainbow styles for him",
-    icon: Flag,
-    color: "from-pride-red via-pride-orange to-pride-yellow",
-    items: 52,
+    colors: ["#E40303", "#FF8C00", "#FFED00", "#008026", "#24408E", "#732982"],
   },
   {
     id: 2,
     name: "Lesbian Pride",
-    description: "Celebrate sapphic love",
-    icon: Heart,
-    color: "from-pride-orange via-pride-pink to-pride-purple",
-    items: 48,
+    colors: ["#D52D00", "#EF7627", "#FF9A56", "#FFFFFF", "#D162A4", "#B55690", "#A30262"],
   },
   {
     id: 3,
     name: "Bisexual Pride",
-    description: "Love without limits",
-    icon: Sparkles,
-    color: "from-pride-pink via-pride-purple to-pride-blue",
-    items: 45,
+    colors: ["#D60270", "#D60270", "#9B4F96", "#0038A8", "#0038A8"],
   },
 ];
 
@@ -32,78 +23,98 @@ const Categories = () => {
   const [hoveredId, setHoveredId] = useState<number | null>(null);
 
   return (
-    <section id="shop" className="py-24 relative">
-      <div className="container mx-auto px-4">
+    <section id="shop" className="py-24 relative overflow-hidden">
+      {/* Background accent */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-card/30 to-transparent" />
+      
+      <div className="container mx-auto px-4 relative z-10">
         {/* Section Header */}
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-5xl font-bold mb-4">
-            Shop by <span className="gradient-rainbow-text">Identity</span>
+            Wear Your <span className="gradient-rainbow-text">Pride</span>
           </h2>
           <p className="text-muted-foreground max-w-xl mx-auto">
-            Find fashion that represents you. Every collection celebrates a unique expression of pride.
+            Explore collections inspired by the colors that represent you.
           </p>
         </div>
 
-        {/* Categories Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {categories.map((category, index) => {
-            const Icon = category.icon;
-            const isHovered = hoveredId === category.id;
+        {/* Horizontal scrolling flags */}
+        <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12">
+          {flags.map((flag) => {
+            const isHovered = hoveredId === flag.id;
 
             return (
               <a
-                key={category.id}
-                href={`#${category.name.toLowerCase().replace(" ", "-")}`}
-                className="group relative overflow-hidden rounded-2xl bg-card border border-border p-8 transition-all duration-500 hover:border-transparent hover:scale-[1.02]"
-                style={{ animationDelay: `${index * 0.1}s` }}
-                onMouseEnter={() => setHoveredId(category.id)}
+                key={flag.id}
+                href={`#${flag.name.toLowerCase().replace(" ", "-")}`}
+                className="group flex flex-col items-center gap-4"
+                onMouseEnter={() => setHoveredId(flag.id)}
                 onMouseLeave={() => setHoveredId(null)}
               >
-                {/* Gradient Background on Hover */}
-                <div
-                  className={`absolute inset-0 bg-gradient-to-br ${category.color} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}
-                />
-
-                {/* Glow Effect */}
-                <div
-                  className={`absolute -inset-1 bg-gradient-to-br ${category.color} opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-500`}
-                />
-
-                <div className="relative z-10">
-                  {/* Icon */}
+                {/* Flag visualization - waving stripes */}
+                <div 
+                  className={`relative w-48 h-32 md:w-56 md:h-36 rounded-xl overflow-hidden shadow-2xl transition-all duration-500 ${
+                    isHovered ? "scale-110 rotate-1" : ""
+                  }`}
+                  style={{
+                    boxShadow: isHovered 
+                      ? `0 20px 60px ${flag.colors[0]}40, 0 0 40px ${flag.colors[flag.colors.length - 1]}30`
+                      : "0 10px 40px rgba(0,0,0,0.4)",
+                  }}
+                >
+                  {/* Flag stripes */}
+                  <div className="absolute inset-0 flex flex-col">
+                    {flag.colors.map((color, index) => (
+                      <div
+                        key={index}
+                        className="flex-1 transition-transform duration-500"
+                        style={{
+                          backgroundColor: color,
+                          transform: isHovered 
+                            ? `scaleX(${1 + Math.sin((index + 1) * 0.5) * 0.02})` 
+                            : "scaleX(1)",
+                        }}
+                      />
+                    ))}
+                  </div>
+                  
+                  {/* Shine overlay */}
+                  <div 
+                    className={`absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-black/10 transition-opacity duration-300 ${
+                      isHovered ? "opacity-100" : "opacity-50"
+                    }`}
+                  />
+                  
+                  {/* Hover CTA */}
                   <div
-                    className={`w-14 h-14 rounded-xl bg-gradient-to-br ${category.color} flex items-center justify-center mb-6 transition-transform duration-300 ${
-                      isHovered ? "scale-110 rotate-3" : ""
+                    className={`absolute inset-0 flex items-center justify-center bg-background/70 backdrop-blur-sm transition-opacity duration-300 ${
+                      isHovered ? "opacity-100" : "opacity-0"
                     }`}
                   >
-                    <Icon className="w-7 h-7 text-background" />
+                    <Button variant="secondary" size="sm" className="font-semibold">
+                      Shop Now
+                    </Button>
                   </div>
-
-                  {/* Content */}
-                  <h3 className="text-xl font-semibold mb-2 group-hover:gradient-rainbow-text transition-all duration-300">
-                    {category.name}
-                  </h3>
-                  <p className="text-muted-foreground text-sm mb-4">
-                    {category.description}
-                  </p>
-
-                  {/* Item Count */}
-                  {category.items > 0 ? (
-                    <span className="text-xs text-muted-foreground">
-                      {category.items} items
-                    </span>
-                  ) : (
-                    <span className="text-xs text-pride-pink">Coming Soon</span>
-                  )}
                 </div>
 
-                {/* Arrow */}
-                <div className="absolute bottom-6 right-6 w-10 h-10 rounded-full bg-secondary flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-4 group-hover:translate-x-0">
-                  <span className="text-foreground">→</span>
-                </div>
+                {/* Label */}
+                <span 
+                  className={`text-lg font-semibold transition-all duration-300 ${
+                    isHovered ? "gradient-rainbow-text" : "text-foreground"
+                  }`}
+                >
+                  {flag.name}
+                </span>
               </a>
             );
           })}
+        </div>
+
+        {/* View All Button */}
+        <div className="text-center mt-12">
+          <Button variant="pride-outline" size="lg">
+            View All Collections
+          </Button>
         </div>
       </div>
     </section>
