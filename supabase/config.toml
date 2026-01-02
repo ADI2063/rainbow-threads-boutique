@@ -1,1 +1,4 @@
 project_id = "byimwbjznptwtudrbckj"
+
+[functions.printful]
+verify_jwt = false
