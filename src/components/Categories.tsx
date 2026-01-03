@@ -1,20 +1,24 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 const flags = [
   {
     id: 1,
     name: "Gay Pride",
+    slug: "gay-pride",
     colors: ["#E40303", "#FF8C00", "#FFED00", "#008026", "#24408E", "#732982"],
   },
   {
     id: 2,
     name: "Lesbian Pride",
+    slug: "lesbian-pride",
     colors: ["#D52D00", "#EF7627", "#FF9A56", "#FFFFFF", "#D162A4", "#B55690", "#A30262"],
   },
   {
     id: 3,
     name: "Bisexual Pride",
+    slug: "bisexual-pride",
     colors: ["#D60270", "#D60270", "#9B4F96", "#0038A8", "#0038A8"],
   },
 ];
@@ -44,9 +48,9 @@ const Categories = () => {
             const isHovered = hoveredId === flag.id;
 
             return (
-              <a
+              <Link
                 key={flag.id}
-                href={`#${flag.name.toLowerCase().replace(" ", "-")}`}
+                to={`/shop?category=${flag.slug}`}
                 className="group flex flex-col items-center gap-4"
                 onMouseEnter={() => setHoveredId(flag.id)}
                 onMouseLeave={() => setHoveredId(null)}
@@ -105,16 +109,18 @@ const Categories = () => {
                 >
                   {flag.name}
                 </span>
-              </a>
+              </Link>
             );
           })}
         </div>
 
         {/* View All Button */}
         <div className="text-center mt-12">
-          <Button variant="pride-outline" size="lg">
-            View All Collections
-          </Button>
+          <Link to="/shop">
+            <Button variant="pride-outline" size="lg">
+              View All Collections
+            </Button>
+          </Link>
         </div>
       </div>
     </section>

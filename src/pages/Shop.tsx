@@ -1,13 +1,24 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useSearchParams, Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { Heart, ShoppingBag, Star, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useCart } from "@/contexts/CartContext";
 import { usePrintful } from "@/hooks/usePrintful";
-import { useQuery } from "@tanstack/react-query";
+import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
-const FeaturedProducts = () => {
+const categoryFilters = [
+  { id: "all", name: "All Products", keywords: [] },
+  { id: "gay-pride", name: "Gay Pride", keywords: ["gay", "rainbow", "pride"] },
+  { id: "lesbian-pride", name: "Lesbian Pride", keywords: ["lesbian", "sapphic"] },
+  { id: "bisexual-pride", name: "Bisexual Pride", keywords: ["bisexual", "bi pride", "bi-pride"] },
+];
+
+const Shop = () => {
+  const [searchParams] = useSearchParams();
+  const categoryParam = searchParams.get("category") || "all";
   const [favorites, setFavorites] = useState<number[]>([]);
   const [hoveredId, setHoveredId] = useState<number | null>(null);
   const { addToCart } = useCart();
@@ -23,7 +34,7 @@ const FeaturedProducts = () => {
     queryFn: async () => {
       if (!printfulProducts) return [];
       const details = await Promise.all(
-        printfulProducts.slice(0, 6).map((p) => getProduct(p.id))
+        printfulProducts.map((p) => getProduct(p.id))
       );
       return details;
     },
@@ -47,49 +58,82 @@ const FeaturedProducts = () => {
     toast.success(`${product.name} added to cart!`);
   };
 
-  // Show first 6 products
-  const displayProducts = printfulProducts?.slice(0, 6) || [];
+  // Filter products based on category
+  const filteredProducts = printfulProducts?.filter((product) => {
+    if (categoryParam === "all") return true;
+    const filter = categoryFilters.find((f) => f.id === categoryParam);
+    if (!filter) return true;
+    const productNameLower = product.name.toLowerCase();
+    return filter.keywords.some((keyword) => productNameLower.includes(keyword));
+  }) || [];
+
+  const activeCategory = categoryFilters.find((f) => f.id === categoryParam) || categoryFilters[0];
 
   return (
-    <section id="pride" className="py-24 bg-card/50">
-      <div className="container mx-auto px-4">
-        {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-12">
-          <div>
-            <h2 className="text-3xl md:text-5xl font-bold mb-4">
-              Black Tees, <span className="gradient-rainbow-text">Bold Pride</span>
-            </h2>
-            <p className="text-muted-foreground max-w-xl">
-              Classic black t-shirts with vibrant pride designs. Simple, stylish, powerful.
-            </p>
-          </div>
-          <Link to="/shop">
-            <Button variant="pride-outline" className="mt-6 md:mt-0">
-              View All Products
-            </Button>
-          </Link>
+    <div className="min-h-screen bg-background">
+      <Navbar />
+      <main className="container mx-auto px-4 py-24">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <h1 className="text-3xl md:text-5xl font-bold mb-4">
+            {activeCategory.name === "All Products" ? (
+              <>Shop All <span className="gradient-rainbow-text">Pride</span></>
+            ) : (
+              <span className="gradient-rainbow-text">{activeCategory.name}</span>
+            )}
+          </h1>
+          <p className="text-muted-foreground max-w-xl mx-auto">
+            Authentic pride apparel, printed on demand and shipped worldwide.
+          </p>
+        </div>
+
+        {/* Category Filters */}
+        <div className="flex flex-wrap justify-center gap-3 mb-12">
+          {categoryFilters.map((filter) => (
+            <Link
+              key={filter.id}
+              to={`/shop?category=${filter.id}`}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                categoryParam === filter.id
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-card border border-border hover:border-primary"
+              }`}
+            >
+              {filter.name}
+            </Link>
+          ))}
         </div>
 
         {/* Loading State */}
         {isLoading && (
           <div className="flex items-center justify-center py-24">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
-            <span className="ml-3 text-muted-foreground">Loading products...</span>
+            <span className="ml-3 text-muted-foreground">Loading products from Printful...</span>
           </div>
         )}
 
         {/* Error State */}
         {error && (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground mb-2">Unable to load products from Printful.</p>
-            <p className="text-xs text-muted-foreground">Please check your API key configuration.</p>
+          <div className="text-center py-24">
+            <p className="text-destructive mb-4">Failed to load products</p>
+            <p className="text-muted-foreground text-sm">Please check your Printful API key configuration.</p>
+          </div>
+        )}
+
+        {/* No Products */}
+        {!isLoading && !error && filteredProducts.length === 0 && (
+          <div className="text-center py-24">
+            <p className="text-muted-foreground">No products found in this category.</p>
+            <Link to="/shop?category=all">
+              <Button variant="pride-outline" className="mt-4">View All Products</Button>
+            </Link>
           </div>
         )}
 
         {/* Products Grid */}
-        {!isLoading && !error && displayProducts.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {displayProducts.map((product, index) => {
+        {!isLoading && !error && filteredProducts.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            {filteredProducts.map((product, index) => {
               const isHovered = hoveredId === product.id;
               const isFavorite = favorites.includes(product.id);
               const detailedProduct = detailedProducts?.find((d) => d?.id === product.id);
@@ -120,7 +164,7 @@ const FeaturedProducts = () => {
                         }`}>
                           <div className="text-center">
                             <span className="text-6xl block mb-2">👕</span>
-                            <p className="text-xs text-muted-foreground">Black Tee</p>
+                            <p className="text-xs text-muted-foreground">Pride Apparel</p>
                           </div>
                         </div>
                       )}
@@ -203,9 +247,10 @@ const FeaturedProducts = () => {
             })}
           </div>
         )}
-      </div>
-    </section>
+      </main>
+      <Footer />
+    </div>
   );
 };
 
-export default FeaturedProducts;
+export default Shop;
