@@ -8,6 +8,24 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Helper function to get the first store ID
+async function getStoreId(): Promise<number | null> {
+  const response = await fetch('https://api.printful.com/stores', {
+    headers: {
+      'Authorization': `Bearer ${printfulApiKey}`,
+      'Content-Type': 'application/json',
+    },
+  });
+  
+  const data = await response.json();
+  console.log('Stores response:', JSON.stringify(data));
+  
+  if (data.result && data.result.length > 0) {
+    return data.result[0].id;
+  }
+  return null;
+}
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -15,8 +33,20 @@ serve(async (req) => {
   }
 
   try {
+    if (!printfulApiKey) {
+      throw new Error('PRINTFUL_API_KEY is not configured');
+    }
+
     const { action, data } = await req.json();
     console.log(`Printful API action: ${action}`, data);
+
+    // Get store ID for store-specific endpoints
+    const storeId = await getStoreId();
+    console.log('Store ID:', storeId);
+
+    if (!storeId) {
+      throw new Error('No Printful store found. Please ensure your API key has access to at least one store.');
+    }
 
     let endpoint = '';
     let method = 'GET';
@@ -24,24 +54,24 @@ serve(async (req) => {
 
     switch (action) {
       case 'get-products':
-        endpoint = '/store/products';
+        endpoint = `/stores/${storeId}/sync/products`;
         break;
       case 'get-product':
-        endpoint = `/store/products/${data.id}`;
+        endpoint = `/stores/${storeId}/sync/products/${data.id}`;
         break;
       case 'get-sync-product':
-        endpoint = `/store/products/${data.id}`;
+        endpoint = `/stores/${storeId}/sync/products/${data.id}`;
         break;
       case 'get-store-info':
-        endpoint = '/stores';
+        endpoint = `/stores/${storeId}`;
         break;
       case 'create-order':
-        endpoint = '/orders';
+        endpoint = `/stores/${storeId}/orders`;
         method = 'POST';
         body = JSON.stringify(data.order);
         break;
       case 'estimate-costs':
-        endpoint = '/orders/estimate-costs';
+        endpoint = `/stores/${storeId}/orders/estimate-costs`;
         method = 'POST';
         body = JSON.stringify(data.order);
         break;
@@ -64,7 +94,7 @@ serve(async (req) => {
     
     if (!response.ok) {
       console.error('Printful API error:', responseData);
-      throw new Error(responseData.error?.message || 'Printful API error');
+      throw new Error(responseData.error?.message || JSON.stringify(responseData.error) || 'Printful API error');
     }
 
     console.log(`Printful API success for ${action}`);
