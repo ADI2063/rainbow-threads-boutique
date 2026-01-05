@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Heart, ShoppingBag, Star, Loader2 } from "lucide-react";
+import { Heart, ShoppingBag, Loader2, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
 import { usePrintful } from "@/hooks/usePrintful";
@@ -44,51 +44,51 @@ const FeaturedProducts = () => {
       category: "T-Shirts",
     };
     addToCart(cartProduct, 1, "M");
-    toast.success(`${product.name} added to cart!`);
+    toast.success(`${product.name} added to cart`);
   };
 
-  // Show first 6 products
   const displayProducts = printfulProducts?.slice(0, 6) || [];
 
   return (
-    <section id="pride" className="py-24 bg-card/50">
+    <section id="pride" className="py-32">
       <div className="container mx-auto px-4">
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-12">
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-16">
           <div>
-            <h2 className="text-3xl md:text-5xl font-bold mb-4">
-              Black Tees, <span className="gradient-rainbow-text">Bold Pride</span>
-            </h2>
-            <p className="text-muted-foreground max-w-xl">
-              Classic black t-shirts with vibrant pride designs. Simple, stylish, powerful.
+            <p className="text-sm tracking-[0.3em] text-muted-foreground uppercase mb-4 font-body">
+              Featured
             </p>
+            <h2 className="text-4xl md:text-6xl font-light font-display">
+              New <span className="italic">Arrivals</span>
+            </h2>
           </div>
-          <Link to="/shop">
-            <Button variant="pride-outline" className="mt-6 md:mt-0">
-              View All Products
-            </Button>
+          <Link 
+            to="/shop"
+            className="mt-6 md:mt-0 inline-flex items-center gap-2 text-sm tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors premium-link font-body"
+          >
+            View All
+            <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
 
         {/* Loading State */}
         {isLoading && (
           <div className="flex items-center justify-center py-24">
-            <Loader2 className="w-8 h-8 animate-spin text-primary" />
-            <span className="ml-3 text-muted-foreground">Loading products...</span>
+            <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+            <span className="ml-3 text-muted-foreground font-body">Loading products...</span>
           </div>
         )}
 
         {/* Error State */}
         {error && (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground mb-2">Unable to load products from Printful.</p>
-            <p className="text-xs text-muted-foreground">Please check your API key configuration.</p>
+          <div className="text-center py-16">
+            <p className="text-muted-foreground font-body">Unable to load products.</p>
           </div>
         )}
 
         {/* Products Grid */}
         {!isLoading && !error && displayProducts.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
             {displayProducts.map((product, index) => {
               const isHovered = hoveredId === product.id;
               const isFavorite = favorites.includes(product.id);
@@ -98,56 +98,49 @@ const FeaturedProducts = () => {
               return (
                 <div
                   key={product.id}
-                  className="group relative animate-fade-in"
+                  className="group animate-fade-in"
                   style={{ animationDelay: `${index * 0.1}s` }}
                   onMouseEnter={() => setHoveredId(product.id)}
                   onMouseLeave={() => setHoveredId(null)}
                 >
                   {/* Image Container */}
                   <Link to={`/product/${product.id}`}>
-                    <div className="relative overflow-hidden rounded-2xl bg-secondary aspect-[4/5] mb-4">
+                    <div className="relative overflow-hidden bg-card aspect-[3/4] mb-6">
                       {product.thumbnail_url ? (
                         <img
                           src={product.thumbnail_url}
                           alt={product.name}
                           className={`w-full h-full object-cover transition-transform duration-700 ${
-                            isHovered ? "scale-110" : "scale-100"
+                            isHovered ? "scale-105" : "scale-100"
                           }`}
                         />
                       ) : (
-                        <div className={`w-full h-full flex items-center justify-center bg-gradient-to-br from-card to-secondary transition-transform duration-700 ${
-                          isHovered ? "scale-110" : "scale-100"
-                        }`}>
-                          <div className="text-center">
-                            <span className="text-6xl block mb-2">👕</span>
-                            <p className="text-xs text-muted-foreground">Black Tee</p>
-                          </div>
+                        <div className="w-full h-full flex items-center justify-center bg-muted">
+                          <span className="text-6xl">👕</span>
                         </div>
                       )}
 
-                      {/* Overlay */}
+                      {/* Quick Actions Overlay */}
                       <div
-                        className={`absolute inset-0 bg-background/60 backdrop-blur-sm flex items-center justify-center gap-4 transition-opacity duration-300 ${
+                        className={`absolute inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center gap-6 transition-opacity duration-300 ${
                           isHovered ? "opacity-100" : "opacity-0"
                         }`}
                       >
                         <Button
                           size="icon"
-                          variant="secondary"
-                          className="rounded-full h-12 w-12 hover:scale-110 transition-transform"
+                          variant="outline"
+                          className="h-12 w-12 rounded-none"
                           onClick={(e) => {
                             e.preventDefault();
                             handleQuickAdd(product);
                           }}
                         >
-                          <ShoppingBag className="w-5 h-5" />
+                          <ShoppingBag className="w-5 h-5" strokeWidth={1.5} />
                         </Button>
                         <Button
                           size="icon"
-                          variant="secondary"
-                          className={`rounded-full h-12 w-12 hover:scale-110 transition-transform ${
-                            isFavorite ? "text-pride-pink" : ""
-                          }`}
+                          variant="outline"
+                          className={`h-12 w-12 rounded-none ${isFavorite ? "bg-foreground text-background" : ""}`}
                           onClick={(e) => {
                             e.preventDefault();
                             toggleFavorite(product.id);
@@ -155,49 +148,20 @@ const FeaturedProducts = () => {
                         >
                           <Heart
                             className={`w-5 h-5 ${isFavorite ? "fill-current" : ""}`}
+                            strokeWidth={1.5}
                           />
                         </Button>
                       </div>
-
-                      {/* Favorite Button (Mobile) */}
-                      <button
-                        className="absolute top-4 right-4 md:hidden p-2 rounded-full bg-background/80 backdrop-blur-sm"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          toggleFavorite(product.id);
-                        }}
-                      >
-                        <Heart
-                          className={`w-5 h-5 ${
-                            isFavorite ? "text-pride-pink fill-current" : "text-foreground"
-                          }`}
-                        />
-                      </button>
                     </div>
                   </Link>
 
                   {/* Product Info */}
                   <Link to={`/product/${product.id}`}>
-                    <h3 className="font-semibold mb-1 group-hover:gradient-rainbow-text transition-all duration-300 line-clamp-2">
+                    <h3 className="font-light text-lg mb-2 line-clamp-1 font-display">
                       {product.name}
                     </h3>
                   </Link>
-
-                  {/* Rating */}
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="flex items-center">
-                      <Star className="w-4 h-4 text-pride-yellow fill-current" />
-                      <span className="text-sm ml-1">4.9</span>
-                    </div>
-                    <span className="text-xs text-muted-foreground">
-                      (120+ reviews)
-                    </span>
-                  </div>
-
-                  {/* Price */}
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg font-bold">${price}</span>
-                  </div>
+                  <p className="text-muted-foreground font-body text-sm">${price}</p>
                 </div>
               );
             })}
