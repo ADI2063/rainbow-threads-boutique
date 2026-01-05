@@ -8,6 +8,32 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Cache store ID to avoid fetching on every request
+let cachedStoreId: number | null = null;
+
+async function getStoreId(): Promise<number> {
+  if (cachedStoreId !== null) {
+    return cachedStoreId;
+  }
+
+  const response = await fetch('https://api.printful.com/stores', {
+    headers: {
+      'Authorization': `Bearer ${printfulApiKey}`,
+      'Content-Type': 'application/json',
+    },
+  });
+  
+  const data = await response.json();
+  console.log('Stores response:', JSON.stringify(data));
+  
+  if (data.result && data.result.length > 0) {
+    cachedStoreId = data.result[0].id;
+    return cachedStoreId as number;
+  }
+  
+  throw new Error('No Printful store found. Please ensure your API key has access to at least one store.');
+}
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -22,11 +48,14 @@ serve(async (req) => {
     const { action, data } = await req.json();
     console.log(`Printful API action: ${action}`, data);
 
+    // Get store ID for the X-PF-Store-Id header
+    const storeId = await getStoreId();
+    console.log('Using Store ID:', storeId);
+
     let endpoint = '';
     let method = 'GET';
     let body = null;
 
-    // Using Printful API v1 endpoints (the API key is tied to a specific store)
     switch (action) {
       case 'get-products':
         endpoint = '/sync/products';
@@ -61,6 +90,7 @@ serve(async (req) => {
       headers: {
         'Authorization': `Bearer ${printfulApiKey}`,
         'Content-Type': 'application/json',
+        'X-PF-Store-Id': storeId.toString(),
       },
       body,
     });
@@ -72,7 +102,7 @@ serve(async (req) => {
       throw new Error(responseData.error?.message || JSON.stringify(responseData.error) || 'Printful API error');
     }
 
-    console.log(`Printful API success for ${action}:`, JSON.stringify(responseData).substring(0, 200));
+    console.log(`Printful API success for ${action}`);
 
     return new Response(JSON.stringify(responseData), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
