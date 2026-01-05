@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { Heart, ShoppingBag, Star, Loader2 } from "lucide-react";
+import { Heart, ShoppingBag, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePrintful } from "@/hooks/usePrintful";
 import { useCart } from "@/contexts/CartContext";
@@ -10,7 +10,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 const categoryFilters = [
-  { id: "all", name: "All Products", keywords: [] },
+  { id: "all", name: "All", keywords: [] },
   { id: "gay-pride", name: "Gay Pride", keywords: ["gay", "rainbow", "pride"] },
   { id: "lesbian-pride", name: "Lesbian Pride", keywords: ["lesbian", "sapphic"] },
   { id: "bisexual-pride", name: "Bisexual Pride", keywords: ["bisexual", "bi pride", "bi-pride"] },
@@ -55,10 +55,9 @@ const Shop = () => {
       category: "T-Shirts",
     };
     addToCart(cartProduct, 1, "M");
-    toast.success(`${product.name} added to cart!`);
+    toast.success(`${product.name} added to cart`);
   };
 
-  // Filter products based on category
   const filteredProducts = printfulProducts?.filter((product) => {
     if (categoryParam === "all") return true;
     const filter = categoryFilters.find((f) => f.id === categoryParam);
@@ -72,31 +71,31 @@ const Shop = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <main className="container mx-auto px-4 py-24">
+      <main className="container mx-auto px-4 pt-32 pb-24">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-3xl md:text-5xl font-bold mb-4">
-            {activeCategory.name === "All Products" ? (
-              <>Shop All <span className="gradient-rainbow-text">Pride</span></>
+        <div className="text-center mb-16">
+          <p className="text-sm tracking-[0.3em] text-muted-foreground uppercase mb-4 font-body">
+            {activeCategory.id === "all" ? "Shop" : "Collection"}
+          </p>
+          <h1 className="text-4xl md:text-6xl font-light font-display">
+            {activeCategory.name === "All" ? (
+              <>All <span className="italic">Products</span></>
             ) : (
-              <span className="gradient-rainbow-text">{activeCategory.name}</span>
+              <span className="italic">{activeCategory.name}</span>
             )}
           </h1>
-          <p className="text-muted-foreground max-w-xl mx-auto">
-            Authentic pride apparel, printed on demand and shipped worldwide.
-          </p>
         </div>
 
         {/* Category Filters */}
-        <div className="flex flex-wrap justify-center gap-3 mb-12">
+        <div className="flex flex-wrap justify-center gap-4 mb-16">
           {categoryFilters.map((filter) => (
             <Link
               key={filter.id}
               to={`/shop?category=${filter.id}`}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+              className={`px-6 py-3 text-sm tracking-widest uppercase transition-all font-body ${
                 categoryParam === filter.id
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-card border border-border hover:border-primary"
+                  ? "bg-foreground text-background"
+                  : "border border-border hover:border-foreground"
               }`}
             >
               {filter.name}
@@ -107,32 +106,31 @@ const Shop = () => {
         {/* Loading State */}
         {isLoading && (
           <div className="flex items-center justify-center py-24">
-            <Loader2 className="w-8 h-8 animate-spin text-primary" />
-            <span className="ml-3 text-muted-foreground">Loading products from Printful...</span>
+            <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+            <span className="ml-3 text-muted-foreground font-body">Loading products...</span>
           </div>
         )}
 
         {/* Error State */}
         {error && (
           <div className="text-center py-24">
-            <p className="text-destructive mb-4">Failed to load products</p>
-            <p className="text-muted-foreground text-sm">Please check your Printful API key configuration.</p>
+            <p className="text-muted-foreground font-body">Unable to load products.</p>
           </div>
         )}
 
         {/* No Products */}
         {!isLoading && !error && filteredProducts.length === 0 && (
           <div className="text-center py-24">
-            <p className="text-muted-foreground">No products found in this category.</p>
+            <p className="text-muted-foreground font-body mb-6">No products found in this category.</p>
             <Link to="/shop?category=all">
-              <Button variant="pride-outline" className="mt-4">View All Products</Button>
+              <Button variant="outline">View All Products</Button>
             </Link>
           </div>
         )}
 
         {/* Products Grid */}
         {!isLoading && !error && filteredProducts.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-16">
             {filteredProducts.map((product, index) => {
               const isHovered = hoveredId === product.id;
               const isFavorite = favorites.includes(product.id);
@@ -142,56 +140,49 @@ const Shop = () => {
               return (
                 <div
                   key={product.id}
-                  className="group relative animate-fade-in"
-                  style={{ animationDelay: `${index * 0.1}s` }}
+                  className="group animate-fade-in"
+                  style={{ animationDelay: `${Math.min(index, 8) * 0.05}s` }}
                   onMouseEnter={() => setHoveredId(product.id)}
                   onMouseLeave={() => setHoveredId(null)}
                 >
                   {/* Image Container */}
                   <Link to={`/product/${product.id}`}>
-                    <div className="relative overflow-hidden rounded-2xl bg-secondary aspect-[4/5] mb-4">
+                    <div className="relative overflow-hidden bg-card aspect-[3/4] mb-6">
                       {product.thumbnail_url ? (
                         <img
                           src={product.thumbnail_url}
                           alt={product.name}
                           className={`w-full h-full object-cover transition-transform duration-700 ${
-                            isHovered ? "scale-110" : "scale-100"
+                            isHovered ? "scale-105" : "scale-100"
                           }`}
                         />
                       ) : (
-                        <div className={`w-full h-full flex items-center justify-center bg-gradient-to-br from-card to-secondary transition-transform duration-700 ${
-                          isHovered ? "scale-110" : "scale-100"
-                        }`}>
-                          <div className="text-center">
-                            <span className="text-6xl block mb-2">👕</span>
-                            <p className="text-xs text-muted-foreground">Pride Apparel</p>
-                          </div>
+                        <div className="w-full h-full flex items-center justify-center bg-muted">
+                          <span className="text-6xl">👕</span>
                         </div>
                       )}
 
-                      {/* Overlay */}
+                      {/* Quick Actions Overlay */}
                       <div
-                        className={`absolute inset-0 bg-background/60 backdrop-blur-sm flex items-center justify-center gap-4 transition-opacity duration-300 ${
+                        className={`absolute inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center gap-6 transition-opacity duration-300 ${
                           isHovered ? "opacity-100" : "opacity-0"
                         }`}
                       >
                         <Button
                           size="icon"
-                          variant="secondary"
-                          className="rounded-full h-12 w-12 hover:scale-110 transition-transform"
+                          variant="outline"
+                          className="h-12 w-12 rounded-none"
                           onClick={(e) => {
                             e.preventDefault();
                             handleQuickAdd(product);
                           }}
                         >
-                          <ShoppingBag className="w-5 h-5" />
+                          <ShoppingBag className="w-5 h-5" strokeWidth={1.5} />
                         </Button>
                         <Button
                           size="icon"
-                          variant="secondary"
-                          className={`rounded-full h-12 w-12 hover:scale-110 transition-transform ${
-                            isFavorite ? "text-pride-pink" : ""
-                          }`}
+                          variant="outline"
+                          className={`h-12 w-12 rounded-none ${isFavorite ? "bg-foreground text-background" : ""}`}
                           onClick={(e) => {
                             e.preventDefault();
                             toggleFavorite(product.id);
@@ -199,49 +190,20 @@ const Shop = () => {
                         >
                           <Heart
                             className={`w-5 h-5 ${isFavorite ? "fill-current" : ""}`}
+                            strokeWidth={1.5}
                           />
                         </Button>
                       </div>
-
-                      {/* Favorite Button (Mobile) */}
-                      <button
-                        className="absolute top-4 right-4 md:hidden p-2 rounded-full bg-background/80 backdrop-blur-sm"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          toggleFavorite(product.id);
-                        }}
-                      >
-                        <Heart
-                          className={`w-5 h-5 ${
-                            isFavorite ? "text-pride-pink fill-current" : "text-foreground"
-                          }`}
-                        />
-                      </button>
                     </div>
                   </Link>
 
                   {/* Product Info */}
                   <Link to={`/product/${product.id}`}>
-                    <h3 className="font-semibold mb-1 group-hover:gradient-rainbow-text transition-all duration-300 line-clamp-2">
+                    <h3 className="font-light text-lg mb-2 line-clamp-1 font-display">
                       {product.name}
                     </h3>
                   </Link>
-
-                  {/* Rating */}
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="flex items-center">
-                      <Star className="w-4 h-4 text-pride-yellow fill-current" />
-                      <span className="text-sm ml-1">4.9</span>
-                    </div>
-                    <span className="text-xs text-muted-foreground">
-                      (120+ reviews)
-                    </span>
-                  </div>
-
-                  {/* Price */}
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg font-bold">${price}</span>
-                  </div>
+                  <p className="text-muted-foreground font-body text-sm">${price}</p>
                 </div>
               );
             })}

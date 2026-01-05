@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
 
 const flags = [
   {
@@ -27,23 +27,20 @@ const Categories = () => {
   const [hoveredId, setHoveredId] = useState<number | null>(null);
 
   return (
-    <section id="shop" className="py-24 relative overflow-hidden">
-      {/* Background accent */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-card/30 to-transparent" />
-      
-      <div className="container mx-auto px-4 relative z-10">
+    <section id="collections" className="py-32 bg-card">
+      <div className="container mx-auto px-4">
         {/* Section Header */}
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-bold mb-4">
-            Wear Your <span className="gradient-rainbow-text">Pride</span>
-          </h2>
-          <p className="text-muted-foreground max-w-xl mx-auto">
-            Explore collections inspired by the colors that represent you.
+        <div className="text-center mb-20">
+          <p className="text-sm tracking-[0.3em] text-muted-foreground uppercase mb-4 font-body">
+            Collections
           </p>
+          <h2 className="text-4xl md:text-6xl font-light font-display">
+            Shop by <span className="italic">Pride</span>
+          </h2>
         </div>
 
-        {/* Horizontal scrolling flags */}
-        <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12">
+        {/* Categories Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {flags.map((flag) => {
             const isHovered = hoveredId === flag.id;
 
@@ -51,75 +48,59 @@ const Categories = () => {
               <Link
                 key={flag.id}
                 to={`/shop?category=${flag.slug}`}
-                className="group flex flex-col items-center gap-4"
+                className="group block"
                 onMouseEnter={() => setHoveredId(flag.id)}
                 onMouseLeave={() => setHoveredId(null)}
               >
-                {/* Flag visualization - waving stripes */}
-                <div 
-                  className={`relative w-48 h-32 md:w-56 md:h-36 rounded-xl overflow-hidden shadow-2xl transition-all duration-500 ${
-                    isHovered ? "scale-110 rotate-1" : ""
-                  }`}
-                  style={{
-                    boxShadow: isHovered 
-                      ? `0 20px 60px ${flag.colors[0]}40, 0 0 40px ${flag.colors[flag.colors.length - 1]}30`
-                      : "0 10px 40px rgba(0,0,0,0.4)",
-                  }}
-                >
-                  {/* Flag stripes */}
+                <div className="relative aspect-[3/4] overflow-hidden mb-6">
+                  {/* Flag visualization */}
                   <div className="absolute inset-0 flex flex-col">
                     {flag.colors.map((color, index) => (
                       <div
                         key={index}
-                        className="flex-1 transition-transform duration-500"
+                        className="flex-1 transition-transform duration-700"
                         style={{
                           backgroundColor: color,
-                          transform: isHovered 
-                            ? `scaleX(${1 + Math.sin((index + 1) * 0.5) * 0.02})` 
-                            : "scaleX(1)",
+                          transform: isHovered ? "scaleY(1.02)" : "scaleY(1)",
                         }}
                       />
                     ))}
                   </div>
                   
-                  {/* Shine overlay */}
+                  {/* Overlay */}
                   <div 
-                    className={`absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-black/10 transition-opacity duration-300 ${
-                      isHovered ? "opacity-100" : "opacity-50"
-                    }`}
-                  />
-                  
-                  {/* Hover CTA */}
-                  <div
-                    className={`absolute inset-0 flex items-center justify-center bg-background/70 backdrop-blur-sm transition-opacity duration-300 ${
-                      isHovered ? "opacity-100" : "opacity-0"
+                    className={`absolute inset-0 bg-foreground/0 transition-all duration-500 flex items-end justify-center pb-8 ${
+                      isHovered ? "bg-foreground/30" : ""
                     }`}
                   >
-                    <Button variant="secondary" size="sm" className="font-semibold">
+                    <span 
+                      className={`text-sm tracking-widest uppercase text-background font-body flex items-center gap-2 transition-all duration-300 ${
+                        isHovered ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+                      }`}
+                    >
                       Shop Now
-                    </Button>
+                      <ArrowRight className="w-4 h-4" />
+                    </span>
                   </div>
                 </div>
 
                 {/* Label */}
-                <span 
-                  className={`text-lg font-semibold transition-all duration-300 ${
-                    isHovered ? "gradient-rainbow-text" : "text-foreground"
-                  }`}
-                >
+                <h3 className="text-center text-lg tracking-wide font-light font-display">
                   {flag.name}
-                </span>
+                </h3>
               </Link>
             );
           })}
         </div>
 
-        {/* View All Button */}
-        <div className="text-center mt-12">
-          <Link to="/shop">
-            <Button variant="pride-outline" size="lg">
-              View All Collections
-            </Button>
+        {/* View All */}
+        <div className="text-center mt-16">
+          <Link 
+            to="/shop" 
+            className="inline-flex items-center gap-2 text-sm tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors premium-link font-body"
+          >
+            View All Collections
+            <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
       </div>
