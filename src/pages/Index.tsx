@@ -6,7 +6,6 @@ import Newsletter from "@/components/Newsletter";
 import Footer from "@/components/Footer";
 import FloatingShapes from "@/components/FloatingShapes";
 import ParallaxSection from "@/components/ParallaxSection";
-import ParallaxShowcase from "@/components/ParallaxShowcase";
 
 const Index = () => {
   return (
@@ -15,7 +14,6 @@ const Index = () => {
       <Navbar />
       <main className="relative z-10">
         <Hero />
-        <ParallaxShowcase />
         <ParallaxSection speed={0.3} pattern="diagonal">
           <Categories />
         </ParallaxSection>
