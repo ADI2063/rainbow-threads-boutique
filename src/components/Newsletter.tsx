@@ -233,15 +233,13 @@ const Newsletter = () => {
             <p className="text-sm opacity-60 mb-4 font-body">
               Follow us for daily inspiration
             </p>
-            <a
-              href="https://www.instagram.com/adidab__"
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-2 px-6 py-3 border border-background/30 hover:bg-background/10 transition-colors rounded-none font-body"
+            <button
+              onClick={() => window.open("https://www.instagram.com/adidab__", "_blank")}
+              className="inline-flex items-center gap-2 px-6 py-3 border border-background/30 hover:bg-background/10 transition-colors rounded-none font-body cursor-pointer"
             >
               <Instagram className="w-5 h-5" />
               <span>Follow on Instagram</span>
-            </a>
+            </button>
           </div>
         </div>
       </div>
