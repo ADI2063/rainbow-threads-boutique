@@ -235,8 +235,6 @@ const Newsletter = () => {
             </p>
             <a
               href="https://www.instagram.com/adidab__?igsh=MXdjMnhnN21yN3Rubw=="
-              target="_blank"
-              rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-6 py-3 border border-background/30 hover:bg-background/10 transition-colors rounded-none font-body"
             >
               <Instagram className="w-5 h-5" />
